@@ -3,8 +3,9 @@
   #  This file handles AJAX requests from the client and
   #  acts as the middleman between the app and last.fm's
   #  servers.
+  
+  require 'api_key.php';  # kept separate to keep it out of the repo
 
-  define('LASTFM_API_KEY', '');
   define('METHOD_GET_TOP_TRACKS', '1');
   define('METHOD_GET_TOP_ARTISTS', '2');
   
