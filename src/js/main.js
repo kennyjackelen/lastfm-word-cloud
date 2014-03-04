@@ -6,7 +6,6 @@ onLoad = function() {
   $('#ctlUsername').change(validateUsername);
   $('#ctlUsername').keyup(validateUsername);
   $('#btnGo').attr('disabled', true);
-  attachLoadingAlertOnUnload();
   hideLoadingMessage();
 };
 
@@ -26,14 +25,6 @@ validateUsername = function() {
 hideLoadingMessage = function() {
   $('#loading_message').slideUp(500);
 };
-
-attachLoadingAlertOnUnload = function(){
-  window.onbeforeunload = showLoadingMessage;
-}
-
-showLoadingMessage = function(){
-  $('#loading_message').slideDown(500);
-}
 
 formHandler = function(event) {
   event.preventDefault();
