@@ -5,7 +5,7 @@ onLoad = function() {
   $('#main').submit(formHandler);
   $('#ctlUsername').change(validateUsername);
   $('#ctlUsername').keyup(validateUsername);
-  $('#submit').attr('disabled', true);
+  $('#btnGo').attr('disabled', true);
   attachLoadingAlertOnUnload();
   hideLoadingMessage();
 };
@@ -14,12 +14,12 @@ validateUsername = function() {
   var usernameField = $(this);
   if (usernameField.val() === "") {
     $('#fgUsername').addClass('has-error has-feedback');
-    $('#submit').attr('disabled', true);
+    $('#btnGo').attr('disabled', true);
   }
   else
   {
     $('#fgUsername').removeClass('has-error has-feedback');
-    $('#submit').removeAttr('disabled');
+    $('#btnGo').removeAttr('disabled');
   }
 };
 
@@ -37,28 +37,37 @@ showLoadingMessage = function(){
 
 formHandler = function(event) {
   event.preventDefault();
-  showLoadingMessage();
-  $.post( "query.php", $( this ).serialize(), formHandlerCallback );
+  var btn = $('#btnGo');
+  btn.button('loading');
+  $.post( "query.php", $( this ).serialize(), formHandlerCallback ).always(function () {
+      btn.button('reset');
+    });
 };
 
 formHandlerCallback = function(responseData){
   if (responseData.error !== undefined) {
-    $('#errDetail').text(responseData.message);
-    $('#errContainer').show();
-    hideLoadingMessage();
+    showError(responseData.message);
     return;
   }
+  $('#errContainer').hide();
   if (responseData.toptracks !== undefined) {
     buildTrackWordCloud(responseData.toptracks.track);
   }
   else if (responseData.topartists !== undefined) {
     buildArtistWordCloud(responseData.topartists.artist);
   }
-  $('#errContainer').hide();
-  hideLoadingMessage();
+};
+
+showError = function(errMsg){
+  $('#errDetail').text(errMsg);
+  $('#errContainer').show();
 };
 
 buildArtistWordCloud = function(artists) {
+  if (artists === undefined){
+    showError("No data available for this user.");
+    return;
+  }
   var artistsLength = artists.length;
   var artist;
   var playcount;
@@ -79,6 +88,10 @@ buildArtistWordCloud = function(artists) {
 };
 
 buildTrackWordCloud = function(tracks) {
+  if (tracks === undefined){
+    showError("No data available for this user.");
+    return;
+  }
   var tracksLength = tracks.length;
   var track;
   var playcount;
